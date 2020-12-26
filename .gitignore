@@ -1,0 +1,8 @@
+/bin/
+data/booster_histories.json
+data/records/
+design/
+.settings/
+.project/
+lib/processing-3.5.4/
+.project
