@@ -90,7 +90,7 @@ public class BoostersStatus extends Drawable {
 	}
 	
 	public void buildStatus() {
-		int maxMissionCount = coreBase.maxLaunchCount();
+		int maxMissionCount = coreBase.maxMissionCount();
 		int coreCount = coreBase.coreCount();
 		
 		float totalWidth = coreCount * (Mission.DEFAULT_SIZE + BoostersStatus.HISTORY_MARGINS.x * 2);

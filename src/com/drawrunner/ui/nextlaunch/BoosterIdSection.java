@@ -11,11 +11,13 @@ public class BoosterIdSection extends Drawable {
 	private final static float SEPARATOR_WIDTH_FACTOR = 0.08f;
 
 	private String boosterId;
+	private int flightCount;
 	
 	private PFont boosterIdsFont;
 	
-	public BoosterIdSection(PApplet p, String boosterId, PVector position, PFont boosterIdsFont) {
+	public BoosterIdSection(PApplet p, String boosterId, int flightCount, PVector position, PFont boosterIdsFont) {
 		this.boosterId = boosterId;
+		this.flightCount = flightCount;
 		
 		this.position = position;
 		size = new PVector(p.width, boosterIdsFont.getSize() * 1.5f);
@@ -51,7 +53,11 @@ public class BoosterIdSection extends Drawable {
 			if(!isFlightNumberSection) {
 				g.fill(242);
 			} else {
-				g.fill(242, 166);
+				if(boosterIdChar == '.' || flightCount % 10 != 0) {
+					g.fill(242, 166);
+				} else {
+					g.fill(236, 222, 132, 220);
+				}
 			}
 			
 			float charPosX = boosterIdCenterX + boosterIdCursor;

@@ -11,8 +11,8 @@ public class BoosterSection extends Drawable {
 	private BoosterIdSection boosterIdSection;
 	private FlightInfosSection flightInfosSection;
 	
-	public BoosterSection(PApplet p, String boosterId, float posY, PFont boosterIdsFont) {
-		boosterIdSection = new BoosterIdSection(p, boosterId, new PVector(0, posY), boosterIdsFont);
+	public BoosterSection(PApplet p, String boosterId, int flightCount, float posY, PFont boosterIdsFont) {
+		boosterIdSection = new BoosterIdSection(p, boosterId, flightCount, new PVector(0, posY), boosterIdsFont);
 		flightInfosSection = new FlightInfosSection();
 		
 		position = new PVector(0, posY);

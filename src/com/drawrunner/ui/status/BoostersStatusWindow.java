@@ -57,6 +57,7 @@ public class BoostersStatusWindow extends Window {
 		boostersStatus.setPosition(new PVector(ORDINATE_INDICATOR_WIDTH, TITLE_HEIGHT));
 		
 		boostersStatus.buildStatus();
+		
 		if(sortByDate) {
 			boostersStatus.sortHistories();
 		}

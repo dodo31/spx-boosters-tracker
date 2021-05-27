@@ -80,7 +80,7 @@ public class CoreBase extends EntityBase implements DownloadListener {
 		this.notifyPopulated();
 	}
 	
-	public int maxLaunchCount() {
+	public int maxMissionCount() {
 		int maxLaunchCount = 0;
 		
 		for (Core core : cores.values()) {

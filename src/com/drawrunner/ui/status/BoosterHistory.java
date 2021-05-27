@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.drawrunner.constants.Status;
 import com.drawrunner.data.entities.Core;
@@ -132,20 +134,27 @@ public class BoosterHistory extends Drawable implements Comparable<BoosterHistor
 	}
 	
 	@Override
-	public int compareTo(BoosterHistory boosterHistory) {
-		if(missions.isEmpty() && boosterHistory.isEmpty()) {
+	public int compareTo(BoosterHistory otherBoosterHistory) {
+		if(missions.isEmpty() && otherBoosterHistory.isEmpty()) {
 			return 0;
-		} else if(missions.isEmpty() && !boosterHistory.isEmpty()) {
-			return -1;
-		} else if(!missions.isEmpty() && boosterHistory.isEmpty()) {
+		} else if(missions.isEmpty() && !otherBoosterHistory.isEmpty()) {
 			return 1;
+		} else if(!missions.isEmpty() && otherBoosterHistory.isEmpty()) {
+			return -1;
 		} else {
-			if(this.hasAccomplishedMissions() == boosterHistory.hasAccomplishedMissions()) {
+			if(this.hasAccomplishedMissions() == otherBoosterHistory.hasAccomplishedMissions()) {
 				Date firstCurrentDate = missions.get(0).getDate();
-				Date firstOtherDate = boosterHistory.getMission(0).getDate();
+				Date firstOtherDate = otherBoosterHistory.getMission(0).getDate();
 
 				if(firstCurrentDate == null && firstOtherDate == null) {
-					return 0;
+					Pattern numberExtractionPattern = Pattern.compile("[0-9]");
+					Matcher currentSerialMatcher = numberExtractionPattern.matcher(coreSerial);
+					Matcher otherSerialMatcher = numberExtractionPattern.matcher(otherBoosterHistory.getCoreSerial());
+					
+					int currentSerialNumber = Integer.parseInt(currentSerialMatcher.group());
+					int otherSerialNumber = Integer.parseInt(otherSerialMatcher.group());
+					
+					return currentSerialNumber - otherSerialNumber;
 				} else if(firstCurrentDate == null && firstOtherDate != null) {
 					return 1;
 				} else if (firstCurrentDate != null && firstOtherDate == null) {
@@ -153,7 +162,7 @@ public class BoosterHistory extends Drawable implements Comparable<BoosterHistor
 				} else {
 					return firstCurrentDate.compareTo(firstOtherDate);
 				}
-			} else if(!this.hasAccomplishedMissions() && boosterHistory.hasAccomplishedMissions()) {
+			} else if(!this.hasAccomplishedMissions() && otherBoosterHistory.hasAccomplishedMissions()) {
 				return 1;
 			} else {
 				return -1;
@@ -181,15 +190,19 @@ public class BoosterHistory extends Drawable implements Comparable<BoosterHistor
 	}
 	
 	public boolean hasAccomplishedMissions() {
-		boolean hasAccomplishedMissions = false;
-		
-		for (int i = 0; i < missions.size() && !hasAccomplishedMissions; i++) {
-			if(missions.get(i).isAccomplished()) {
-				hasAccomplishedMissions = true;
+		if(missions.isEmpty()) {
+			return false;
+		} else {
+			boolean hasAccomplishedMissions = !missions.isEmpty();
+			
+			for (int i = 0; i < missions.size() && !hasAccomplishedMissions; i++) {
+				if(missions.get(i).isAccomplished()) {
+					hasAccomplishedMissions = true;
+				}
 			}
+			
+			return hasAccomplishedMissions;
 		}
-		
-		return hasAccomplishedMissions;
 	}
 	
 	public String getCoreSerial() {

@@ -109,7 +109,7 @@ public class NextLaunch extends Drawable {
 			int coreFlightNumber = coreContext.getFlightCount();
 			String coreDemonimation = coreSerial + "." + (coreFlightNumber >= 0 ? coreFlightNumber : "?");
 			
-			BoosterSection boosterSection = new BoosterSection(p, coreDemonimation, cursorY, boosterIdFont);
+			BoosterSection boosterSection = new BoosterSection(p, coreDemonimation, coreFlightNumber, cursorY, boosterIdFont);
 			boosterSections.add(boosterSection);
 			
 			String padName = launchpad.getShortName();
