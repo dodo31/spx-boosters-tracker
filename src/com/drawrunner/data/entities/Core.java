@@ -1,10 +1,10 @@
 package com.drawrunner.data.entities;
 
-import com.drawrunner.constants.Status;
+import com.drawrunner.constants.CoreStatus;
 
 public class Core extends SpaceEntity {
 	private String serialNumber;
-	private Status status;
+	private CoreStatus status;
 	
 	private int blockNumber;
 	private int reuseCount;
@@ -36,7 +36,7 @@ public class Core extends SpaceEntity {
 	}
 
 	public boolean isActive() {
-		return status == Status.ACTIVE;
+		return status == CoreStatus.ACTIVE;
 	}
 	
 	public boolean hasBeenLaunched() {
@@ -55,19 +55,19 @@ public class Core extends SpaceEntity {
 		this.serialNumber = serialNumber;
 	}
 
-	public Status getStatus() {
+	public CoreStatus getStatus() {
 		return this.status;
 	}
 
-	public void setStatus(Status status) {
+	public void setStatus(CoreStatus status) {
 		this.status = status;
 	}
 
 	public void setStatus(String status) {
 		try {
-			this.status = Enum.valueOf(Status.class, status.toUpperCase());
+			this.status = Enum.valueOf(CoreStatus.class, status.toUpperCase());
 		} catch (IllegalArgumentException iae) {
-			this.status = Status.UNKNOWN;
+			this.status = CoreStatus.UNKNOWN;
 			
 			System.err.println("Unknown core status: " + status);
 			iae.printStackTrace();

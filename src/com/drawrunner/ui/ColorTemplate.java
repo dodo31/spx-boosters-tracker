@@ -26,4 +26,8 @@ public interface ColorTemplate {
 	
 	public static final Color ODD_BOOSTER_SECTION_BACKGROUND = new Color(30, 34, 36);
 	public static final Color EVEN_BOOSTER_SECTION_BACKGROUND = BACKGROUND;
+	
+	public static final Color MISSION_COUNT_INDICATOR_UNKNOWN = new Color(255, 255, 255, 230);
+	public static final Color MISSION_COUNT_INDICATOR_DEAD = LIFTOFF_TOTAL_FAILURE.brighter().brighter();
+	public static final Color MISSION_COUNT_INDICATOR_ALIVE = LANDING_SUCCESS.brighter().brighter();
 }

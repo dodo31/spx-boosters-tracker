@@ -55,12 +55,8 @@ public class BoostersStatusWindow extends Window {
 	
 	public void build(PApplet p) {
 		boostersStatus.setPosition(new PVector(ORDINATE_INDICATOR_WIDTH, TITLE_HEIGHT));
-		
 		boostersStatus.buildStatus();
-		
-		if(sortByDate) {
-			boostersStatus.sortHistories();
-		}
+		boostersStatus.sortHistories(sortByDate, block5Only);
 		
 		if(!block5Only) {
 			boostersStatus.addLabel("B1046", "BLOCK 5");

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.drawrunner.constants.Status;
+import com.drawrunner.constants.CoreStatus;
 import com.drawrunner.data.entities.Core;
 import com.drawrunner.ui.ColorTemplate;
 import com.drawrunner.ui.Drawable;
@@ -17,13 +17,13 @@ import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.core.PVector;
 
-public class BoosterHistory extends Drawable implements Comparable<BoosterHistory> {
+public class BoosterHistory extends Drawable {
 	public static final float SERIAL_LABEL_HEIGHT = Mission.DEFAULT_SIZE * 0.42f;
 	public static final float STATUS_LABEL_HEIGHT = Mission.DEFAULT_SIZE * 0.46f;
 	public static final float STATUS_LABEL_MARGIN = 6;
 	
 	private String coreSerial;
-	private Status coreStatus;
+	private CoreStatus coreStatus;
 	
 	private List<Mission> missions;
 	
@@ -45,10 +45,7 @@ public class BoosterHistory extends Drawable implements Comparable<BoosterHistor
 		float missionPosY = (position.y + size.y) - SERIAL_LABEL_HEIGHT - STATUS_LABEL_HEIGHT - ((missions.size() + 1) * (Mission.DEFAULT_SIZE + BoostersStatus.HISTORY_MARGINS.y * 2));
 		
 		mission.setPosition(new PVector(missionPosX, missionPosY));
-		
-		if(!coreSerial.contains("1057") || (coreSerial.contains("1057") && mission.isAccomplished())) {
-			missions.add(mission);
-		}
+		missions.add(mission);
 	}
 
 	public void removeMission(Mission mission) {
@@ -76,6 +73,8 @@ public class BoosterHistory extends Drawable implements Comparable<BoosterHistor
 			Mission mission = missions.get(y);
 			mission.draw(g);
 		}
+		
+		this.drawCountIndicator(g);
 	}
 
 	private void drawSerialLabel(PGraphics g) {
@@ -117,7 +116,7 @@ public class BoosterHistory extends Drawable implements Comparable<BoosterHistor
 			statusAbbrebation = "LOST";
 			break;
 		case UNKNOWN:
-			mainColor = ColorTemplate.LIFTOFF_PARTIAL_FAILURE;
+			mainColor = ColorTemplate.LANDING_SUCCESS;
 			statusAbbrebation = "UNKN.";
 			break;
 		}
@@ -133,59 +132,34 @@ public class BoosterHistory extends Drawable implements Comparable<BoosterHistor
 		g.text(statusAbbrebation, statusCenterX, statusBottomY);
 	}
 	
-	@Override
-	public int compareTo(BoosterHistory otherBoosterHistory) {
-		if(missions.isEmpty() && otherBoosterHistory.isEmpty()) {
-			return 0;
-		} else if(missions.isEmpty() && !otherBoosterHistory.isEmpty()) {
-			return 1;
-		} else if(!missions.isEmpty() && otherBoosterHistory.isEmpty()) {
-			return -1;
-		} else {
-			if(this.hasAccomplishedMissions() == otherBoosterHistory.hasAccomplishedMissions()) {
-				Date firstCurrentDate = missions.get(0).getDate();
-				Date firstOtherDate = otherBoosterHistory.getMission(0).getDate();
-
-				if(firstCurrentDate == null && firstOtherDate == null) {
-					Pattern numberExtractionPattern = Pattern.compile("[0-9]");
-					Matcher currentSerialMatcher = numberExtractionPattern.matcher(coreSerial);
-					Matcher otherSerialMatcher = numberExtractionPattern.matcher(otherBoosterHistory.getCoreSerial());
-					
-					int currentSerialNumber = Integer.parseInt(currentSerialMatcher.group());
-					int otherSerialNumber = Integer.parseInt(otherSerialMatcher.group());
-					
-					return currentSerialNumber - otherSerialNumber;
-				} else if(firstCurrentDate == null && firstOtherDate != null) {
-					return 1;
-				} else if (firstCurrentDate != null && firstOtherDate == null) {
-					return -1;
-				} else {
-					return firstCurrentDate.compareTo(firstOtherDate);
-				}
-			} else if(!this.hasAccomplishedMissions() && otherBoosterHistory.hasAccomplishedMissions()) {
-				return 1;
+	private void drawCountIndicator(PGraphics g) {
+		int missionCount = missions.size();
+		
+		if(!missions.isEmpty()) {
+			Mission lastMission = missions.get(missionCount - 1);
+			PVector missionPosition = lastMission.getPosition();
+			PVector missionSize = lastMission.getSize();
+			
+			if(this.isCoreDead()) {
+				g.fill(ColorTemplate.MISSION_COUNT_INDICATOR_UNKNOWN.getRGB());
+			} else if(this.isCoreAlive()) {
+				g.fill(ColorTemplate.MISSION_COUNT_INDICATOR_UNKNOWN.getRGB());
 			} else {
-				return -1;
+				g.fill(ColorTemplate.MISSION_COUNT_INDICATOR_UNKNOWN.getRGB());
 			}
 			
-//			if(this.hasAccomplishedMissions() == boosterHistory.hasAccomplishedMissions()) {
-//				Date lastCurrentDate = missions.get(missions.size() - 1).getDate();
-//				Date lastOtherDate = boosterHistory.getMission(boosterHistory.missionCount() - 1).getDate();
-//
-//				if(lastCurrentDate == null && lastOtherDate == null) {
-//					return 0;
-//				} else if(lastCurrentDate == null && lastOtherDate != null) {
-//					return 1;
-//				} else if (lastCurrentDate != null && lastOtherDate == null) {
-//					return -1;
-//				} else {
-//					return lastCurrentDate.compareTo(lastOtherDate);
-//				}
-//			} else if(!this.hasAccomplishedMissions() && boosterHistory.hasAccomplishedMissions()) {
-//				return 1;
-//			} else {
-//				return -1;
-//			}
+			if(missionCount % 10 == 0) {
+				g.fill(210, 194, 114);
+			}
+			
+			g.textSize(missionSize.y * 0.45f);
+			g.textAlign(PApplet.CENTER, PApplet.BOTTOM);
+			g.text(missionCount, missionPosition.x + missionSize.x * 0.5f, missionPosition.y - missionSize.y * 0.2f);
+			
+			g.stroke(ColorTemplate.SEPARATOR.getRGB());
+			g.strokeWeight(3);
+			g.line(missionPosition.x + missionSize.x * 0.2f, missionPosition.y - missionSize.y * 0.15f,
+				   missionPosition.x + missionSize.x * 0.8f, missionPosition.y - missionSize.y * 0.15f);
 		}
 	}
 	
@@ -203,6 +177,17 @@ public class BoosterHistory extends Drawable implements Comparable<BoosterHistor
 			
 			return hasAccomplishedMissions;
 		}
+	}
+	
+	public boolean isCoreAlive() {
+		return coreStatus == CoreStatus.ACTIVE
+			|| coreStatus == CoreStatus.UNKNOWN;
+	}
+	
+	public boolean isCoreDead() {
+		return coreStatus == CoreStatus.EXPENDED
+			|| coreStatus == CoreStatus.INACTIVE
+			|| coreStatus == CoreStatus.LOST;
 	}
 	
 	public String getCoreSerial() {

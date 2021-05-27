@@ -2,10 +2,14 @@ package com.drawrunner.ui.status;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.drawrunner.constants.Features;
 import com.drawrunner.constants.Landings;
@@ -180,8 +184,8 @@ public class BoostersStatus extends Drawable {
 		}
 	}
 
-	public void sortHistories() {
-		Collections.sort(boosterHistories);
+	public void sortHistories(boolean sortByDate, boolean sortByState) {
+		boosterHistories.sort(new MissionComparator(sortByDate, sortByState));
 		
 		for (int i = 0; i < boosterHistories.size(); i++) {
 			BoosterHistory boosterHistory = boosterHistories.get(i);
